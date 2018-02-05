@@ -1,0 +1,25 @@
+---
+
+- name: setup pxe server
+  hosts: all
+  become: yes
+
+  tasks:
+
+    - name: install packages
+      yum:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - httpd
+        - tftp-server
+        - syslinux-tftpboot
+
+    - name: create pxelinux.cfg dir
+      file:
+        path: /var/lib/tftpboot/pxelinux.cfg/
+        state: directory
+
+    - name: copy pxe config template
+      template:
+        src: /vagrant/files/templates/default
